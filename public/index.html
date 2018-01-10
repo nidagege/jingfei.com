@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+* {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    font-weight: normal;
+    text-decoration: none;
+    font-style: normal;
+    list-style:none;
+}
+ul li{
+	overflow: hidden;
+}
+ul li img{
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	display: inline-block;
+	float: left;
+	}
+.dj{
+	width: 100px;
+	height: 100px;
+	background-color: orange;
+	line-height: 100px;
+	text-align: center;
+	border-radius: 50%;
+	color:white;
+	font-size: 16px;
+	display: inline-block;
+	float: left;
+
+}
+.sc{
+	width: 100px;
+	height: 100px;
+	background-color: orange;
+	line-height: 100px;
+	text-align: center;
+	border-radius: 50%;
+	color:white;
+	font-size: 16px;
+	display: inline-block;
+	float: left;
+
+}
+.box{
+	width: 500px;
+	height: 500px;
+	background-color: yellow;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	margin-left: -250px;
+	margin-top: -250px;
+	display: none;
+}
+</style>
+</head>
+<body>
+	<input type="file" id="file" onchange="change(this)">
+	<button class="btn_1">提交</button>
+	<ul></ul>
+	<div class="box">
+		<input type="file" id="fil" onchange="change2(this)">
+	    <button class="btn_2" onclick="go('${e[i].id}')">修改</button>
+	</div>
+	<script type="text/javascript" src = "jquery.min.js"></script>
+	<script type="text/javascript">
+	xs()
+	function xs(){
+     	$.ajax({
+            url:'http://localhost:8000/user/images',
+            type:'POST',
+            contentType:false,
+            processData:false,
+            success:function(e){
+                console.log(e)
+                var str=""
+                for(var i = 0; i < e.length;i++){
+               str+=`<li><img src='${e[i].img}'><button class="dj" onclick="rel()">修改</button><button class="sc"  onclick="del(${e[i].id},$(this))">删除</button></li>`
+console.log(e[e.length-1].img)
+                }
+                $("ul").html(str)
+
+            }
+        })
+     }
+	
+	var files;
+    function change (el){
+        // console.log(el.files)
+        files = el.files
+    }
+    $('.btn_1').click(function(){
+        var fd = new FormData();
+        fd.append('files',files[0]);
+        console.log(fd)
+        $.ajax({
+            url:'http://localhost:8000/user/img',
+            type:'POST',
+            data: fd,
+            contentType:false,
+            processData:false,
+            success:function(e){
+
+                console.log(e)
+                var str=""
+                for(var i = 0; i < e.length;i++){
+
+               str+=`<li><img src='${e[i].img}'><button class="dj" onclick="rel()">修改</button><button class="sc" onclick="del(${e[i].id},$(this))">删除</button></li>`
+console.log(e[i])
+                }
+                $("ul").html(str)
+
+            }
+        })
+    })
+
+    function del(id,ro){
+				$.ajax({
+				url:'http://localhost:8000/user/delete',
+				type:'POST',
+				data:{
+					id:id
+				},
+				success:function(e){
+					console.log(e)
+					if(e){
+						ro.parent().remove()  
+					}
+				}
+			})
+		}
+		 function rel(){
+				$('.box').css('display','block')
+
+		}
+
+var files2;
+    function change2 (el){
+        // console.log(el.files)
+        files2 = el.files
+    }
+		function go(id){
+			$('.box').css('display','none')
+			// $('.btn_2').click(function(){
+        var fro = new FormData();
+        fro.append('files',files2[0]);
+        console.log(fro)
+        $.ajax({
+            url:'http://localhost:8000/user/img_il',
+            type:'POST',
+            data: 
+            	fro,
+            contentType:false,
+            processData:false,
+            success:function(e){
+             
+                
+                var str=""
+                for(var i = 0; i < e.length;i++){
+
+               str+=`<li><img src='${e[i].img}'><button class="dj" onclick="rel()">修改</button><button class="sc" onclick="del(${e[i].id},$(this))">删除</button></li>`
+console.log(e[i])
+                }
+                $("ul").html(str)
+
+            }
+
+            
+        })
+    // })
+		}
+     
+   
+	</script>
+</body>
+</html>
